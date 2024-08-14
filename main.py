@@ -20,7 +20,6 @@ async def index(session: AsyncSession = Depends(get_session)):
     logger.info("Processing request for /api/singlish_data")
     result = await session.execute(select(singlish_data))
     data = result.fetchall()
-    # Log the type and content of data
     # print(f"Data type: {type(data)}")
     # print(f"Data content: {data}")
     # Convert each row to a dictionary
