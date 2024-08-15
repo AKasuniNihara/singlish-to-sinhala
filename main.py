@@ -1,11 +1,27 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from starlette.middleware.cors import CORSMiddleware
+
 from config.db import async_session
 from models.index import singlish_data
 from config.logging_config import logging
+from controllers.generated_data_controller import router as generated_data_router
+
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:8080",  # Replace with your frontend origin
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Dependency to get an async session
 async def get_session() -> AsyncSession:
@@ -30,3 +46,5 @@ async def index(session: AsyncSession = Depends(get_session)):
         "data": data_list
     }
 
+# Register the new router for generated_data endpoints
+app.include_router(generated_data_router, prefix="/api")
